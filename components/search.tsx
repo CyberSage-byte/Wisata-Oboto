@@ -11,8 +11,8 @@ const Search = () => {
       <View className='flex-1 flex-row items-center justify-start z-50'>
         <EvilIcons name="search" size={20} color="black" />        
         <TextInput 
-        placeholder='Search for anything'
-        className='text-sm font-rubik text-black-300 ml-2 flex-1'
+        placeholder='Cari Wisata'
+        className='text-sm font-rubik text-black-300 ml-2 mt-1 flex-1'
         /> 
       </View>
 
