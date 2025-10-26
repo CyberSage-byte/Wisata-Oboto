@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -37,16 +38,18 @@ export const Card = ({ name, location, price, image, rating = "4.5", onPress }: 
       />
 
       {/* Info Wisata */}
-      <View className="flex flex-col mt-2">
+      <View className="flex flex-col mt-2 justify-between flex-1">
         <Text className="text-base font-rubik-bold text-black-300">{name}</Text>
-        <Text className="text-xs font-rubik text-black-200">{location}</Text>
-
         <View className="flex flex-row items-center justify-between mt-2">
-          <Text className="text-base font-rubik-bold text-primary-300">{price}</Text>
-          <Image
-            source={{ uri: "https://img.icons8.com/ios-filled/50/191d31/like.png" }}
-            className="w-5 h-5 mr-2"
-          />
+          <Text
+            className="text-xs font-rubik text-black-200 flex-1 mr-2"
+            numberOfLines={2}
+            ellipsizeMode="tail"
+          >
+            {location}
+          </Text>
+          <MaterialCommunityIcons name="heart-outline" size={20} color="#d1d1d1" />
+
         </View>
       </View>
     </TouchableOpacity>

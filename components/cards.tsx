@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -42,10 +43,7 @@ export const TourCard = ({ name, location, price, image, onPress }: TourCardProp
 
         <View className="flex flex-row items-center justify-between w-full">
           <Text className="text-base font-rubik-extrabold text-white">{price}</Text>
-          <Image
-            source={{ uri: "https://img.icons8.com/ios-filled/50/ffffff/like.png" }}
-            className="size-5"
-          />
+          <MaterialCommunityIcons name="heart" size={20} color="white" />
         </View>
       </View>
     </TouchableOpacity>

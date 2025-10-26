@@ -5,15 +5,15 @@ import { WebView } from 'react-native-webview';
 
 import { useLocalSearchParams } from "expo-router";
 import {
-    Dimensions,
-    FlatList,
-    Image,
-    Linking,
-    Modal,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View
+  Dimensions,
+  FlatList,
+  Image,
+  Linking,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 const { height, width } = Dimensions.get("window");

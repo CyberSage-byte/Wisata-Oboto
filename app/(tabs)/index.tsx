@@ -6,7 +6,7 @@ import { APPWRITE_IDS, databases, Query, storage } from "@/lib/appwrite";
 import { Feather } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
-import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, ImageBackground, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 
@@ -137,6 +137,14 @@ export default function HomeScreen() {
     }
   };
 
+  const [isScrolled, setIsScrolled] = useState(false); // 🔥 Buat deteksi scroll
+
+  const handleScroll = (event) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    // kalau scroll lebih dari 250px (tinggi hero kira-kira segitu)
+    setIsScrolled(offsetY > 250);
+  };
+
   // 🕒 Debounce: tunggu 500ms sebelum update debouncedSearch
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -216,17 +224,26 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView className="bg-[#f1f1f1] h-full" edges={['top', 'left', 'right']}>
+    <View className="flex-1 bg-white">
+      {/* ✅ Status bar berubah tergantung posisi scroll */}
+      <StatusBar
+        translucent
+        backgroundColor={isScrolled ? "rgba(255,255,255,0.95)" : "transparent"}
+        barStyle={isScrolled ? "dark-content" : "dark-content"}
+      />
+
       <FlatList
+        onScroll={handleScroll}
+        scrollEventThrottle={16} // biar event scroll lebih smooth
         data={filteredWisataList}
         renderItem={({ item }) => (
-        <Card
-          name={item.name}
-          location={item.location}
-          price={item.price}
-          image={item.image ?? require('@/assets/images/no-image.png')}
-          onPress={() => handlePress(item.id)}
-        />
+          <Card
+            name={item.name}
+            location={item.location}
+            price={item.price}
+            image={item.image ?? require('@/assets/images/no-image.png')}
+            onPress={() => handlePress(item.id)}
+          />
         )}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
@@ -246,79 +263,81 @@ export default function HomeScreen() {
           ) : null
         }
         ListHeaderComponent={
-          <View className="px-5">
-            <View className="mt-5">
-              <View className="flex flex-row items-center justify-between mb-5">
-                <View className="flex flex-row items-center">
-                  <Image
-                    source={require('@/assets/images/avatar.png')}
-                    className="size-12 rounded-full"
-                  />
-                  <View className="flex flex-col items-start ml-2 justify-center">
-                    <Text className="text-xs font-rubik text-[#37474F]">{greeting}</Text>
-                    <Text className="text-sm font-rubik-medium text-black-300">Andre</Text>
+          <ImageBackground
+            source={require('@/assets/images/background.png')}
+            resizeMode="cover"
+            className="w-full pt-14 pb-6"
+          >
+            <View className="px-5">
+              <View className="mt-2">
+                <View className="flex flex-row items-center justify-between mb-5">
+                  <View className="flex flex-row items-center">
+                    <Image
+                      source={require('@/assets/images/avatar.png')}
+                      className="size-12 rounded-full"
+                    />
+                    <View className="flex flex-col items-start ml-2 justify-center">
+                      <Text className="text-xs font-rubik text-[#37474F]">{greeting}</Text>
+                      <Text className="text-sm font-rubik-medium text-black-300">Andre</Text>
+                    </View>
+                  </View>
+                  <View className="p-2 rounded-full">
+                    <Feather name="bell" size={24} color="black" />
                   </View>
                 </View>
-                <View className="p-2 rounded-full">
-                  <Feather name="bell" size={24} color="black" />
+
+                <View className="relative my-2">
+                  <View className="flex-1 z-1">
+                    <Text className="text-xl font-rubik-bold text-black">
+                      Waktunya
+                    </Text>
+                    <Text className="text-[22px] font-rubik-bold text-black">
+                      Liburan !!
+                    </Text>
+                  </View>
+
+                  <View className="absolute -top-20 right-3 items-center z-0">
+                    <Image
+                      source={require('@/assets/images/travel-car.png')}
+                      style={{ width: 200, height: 200 }}
+                      resizeMode="contain"
+                    />
+                  </View>
                 </View>
               </View>
 
-              <View className="relative my-2">
-                <View className="flex-1 z-1">
-                  <Text className="text-xl font-rubik-bold text-black">
-                    Waktunya
-                  </Text>
-                  <Text className="text-[22px] font-rubik-bold text-black">
-                    Liburan !!
-                  </Text>
-                </View>
+              <Search onSearch={setSearchQuery} searchQuery={searchQuery} />
 
-                <View className="absolute -top-20 right-3 items-center z-0">
-                  <Image
-                    source={require('@/assets/images/travel-car.png')}
-                    style={{ width: 200, height: 200 }}
-                    resizeMode="contain"
+              <View className="flex flex-row items-center justify-between mt-4">
+                <Text className="text-xl font-rubik-bold text-black-300">Wisata Populer</Text>
+              </View>
+
+              <FlatList
+                data={wisataList}
+                renderItem={({ item }) => (
+                  <TourCard
+                    name={item.name}
+                    location={item.location}
+                    price={item.price}
+                    image={item.image ?? require('@/assets/images/no-image.png')}
+                    onPress={() => handlePress(item.id)}
                   />
-                </View>
-              </View>
+                )}
+                keyExtractor={(item) => item.id.toString()}
+                horizontal
+                bounces={false}
+                showsHorizontalScrollIndicator={false}
+                contentContainerClassName="flex gap-5 mt-5"
+              />
+
+              <Filters />
+              <Text className="text-xl font-rubik-bold text-black-300 mt-4">
+                {debouncedSearch ? `Hasil Pencarian "${debouncedSearch}"` : 'Wisata Lainnya'}
+              </Text>
             </View>
-
-            {/* 💥 Search pakai debounce */}
-            <Search 
-              onSearch={setSearchQuery}
-              searchQuery={searchQuery}
-            />
-
-            <View className="flex flex-row items-center justify-between mt-4">
-              <Text className="text-xl font-rubik-bold text-black-300">Wisata Populer</Text>
-            </View>
-
-            <FlatList
-              data={wisataList}
-              renderItem={({ item }) => (
-                <TourCard
-                  name={item.name}
-                  location={item.location}
-                  price={item.price}
-                  image={item.image ??require('@/assets/images/no-image.png')}
-                  onPress={() => handlePress(item.id)}
-                />
-              )}
-              keyExtractor={(item) => item.id.toString()}
-              horizontal
-              bounces={false}
-              showsHorizontalScrollIndicator={false}
-              contentContainerClassName="flex gap-5 mt-5"
-            />
-
-            <Filters />
-            <Text className="text-xl font-rubik-bold text-black-300 mt-4">
-              {debouncedSearch ? `Hasil Pencarian "${debouncedSearch}"` : 'Wisata Lainnya'}
-            </Text>
-          </View>
+          </ImageBackground>
         }
       />
-    </SafeAreaView>
+    </View>
   );
 }
